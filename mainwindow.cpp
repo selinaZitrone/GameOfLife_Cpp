@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // scene = new QGraphicsScene(this);
     scene = new MyGraphicScene(this);
 
     qDebug() << "s";
