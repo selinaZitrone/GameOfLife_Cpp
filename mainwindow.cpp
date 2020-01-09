@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->loopMsLabel->setText(QStringLiteral("%1 ms").arg(ui->loopMs->value()));
 
-
+    // it creates a basic empty "new"
     game->initializeEmptyGame(get_CellsPerLine());
     scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
 

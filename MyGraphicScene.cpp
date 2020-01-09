@@ -21,7 +21,7 @@ MyGraphicScene::MyGraphicScene(QGraphicsItem *parent)
 
 
 void MyGraphicScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    qDebug() << event->scenePos().x() << " " << event->scenePos().y();
+    // qDebug() << event->scenePos().x() << " " << event->scenePos().y();
     mainWin->toggleCells(event->scenePos().x(), event->scenePos().y());
 
 }
