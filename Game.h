@@ -12,7 +12,7 @@ public:
     void initializeEmptyGame(int cellsPerSide);
     void oneStepFurther();
     void oneStepBack();
-    vector<bool> calculateLogicOfLife(vector<bool>&);
+    vector<bool> calculateLogicOfLife(vector<bool>&, int cellsPerLine);
 
     int actualStep;
     int actualCellsPerLine;

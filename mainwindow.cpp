@@ -5,6 +5,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include "MyGraphicScene.h"
 #include "Game.h"
+#include "gamewindow.h"
+#include "twoplayers.h"
 
 using namespace std;
 #include <vector>
@@ -19,6 +21,10 @@ MyGraphicScene is derived from QGraphicsScene
 */
 
 extern Game * game;
+
+extern GameWindow * gameWin;
+
+extern TwoPlayers * twoPlay;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -44,8 +50,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::toggleCells(int x, int y)
+void MainWindow::toggleCells(int x, int y, MyGraphicScene * theScene)
 {
+    if(theScene != scene) return;
     if(x > game->actualCellsPerLine * (vieWresolution / game->actualCellsPerLine)
             || y > game->actualCellsPerLine * (vieWresolution / game->actualCellsPerLine) ) return;
 
@@ -171,4 +178,18 @@ void MainWindow::on_forwardStepButton_clicked()
 void MainWindow::on_loopMs_sliderMoved(int position)
 {
     ui->loopMsLabel->setText(QStringLiteral("%1 ms").arg(ui->loopMs->value()));
+}
+
+
+void MainWindow::on_twoPlayersOpenButton_clicked()
+{
+    qDebug() << "clicked for two players";
+    gameWin->show();
+    twoPlay->initializeGame();
+
+    gameWin->scenes[0]->paintLife(twoPlay->tables[0],twoPlay->tableDim);
+    gameWin->scenes[1]->paintLife(twoPlay->tables[1],twoPlay->tableDim);
+
+    gameWin->updateGUI();
+    qDebug() << "painted";
 }

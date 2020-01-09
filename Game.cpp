@@ -22,7 +22,7 @@ void Game::initializeEmptyGame(int cellsPerLine)
 
 void Game::oneStepFurther()
 {
-    gameSteps.push_back(calculateLogicOfLife(gameSteps[bufferIndex]));
+    gameSteps.push_back(calculateLogicOfLife(gameSteps[bufferIndex], actualCellsPerLine));
     if(bufferIndex < stepsBuffer){
         bufferIndex++;
     } else {
@@ -41,10 +41,10 @@ void Game::oneStepBack()
     mainWin->updateGUI();
 }
 
-vector<bool> Game::calculateLogicOfLife(vector<bool> & status)
+vector<bool> Game::calculateLogicOfLife(vector<bool> & status, int cellsPerLine)
 {
-    vector<bool> toReturn(actualCellsPerLine*actualCellsPerLine, false);
-    int len = actualCellsPerLine;
+    vector<bool> toReturn(cellsPerLine*cellsPerLine, false);
+    int len = cellsPerLine;
 
     for(int i = 0; i < status.size() ; i++){
             int sumOfNeigbors = 0;

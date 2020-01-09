@@ -15,6 +15,7 @@ public:
     MyGraphicScene(QGraphicsItem * parent = 0);
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void paintLife(vector<bool>, int len);
+    int myDimension;
 
 
 };

@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void toggleCells(int x, int y);
+    void toggleCells(int x, int y, MyGraphicScene * theScene);
 
     int get_CellsPerLine();
     int get_ViewResolution();
@@ -44,6 +44,8 @@ private slots:
     void on_forwardStepButton_clicked();
 
     void on_loopMs_sliderMoved(int position);
+
+    void on_twoPlayersOpenButton_clicked();
 
 private:
     Ui::MainWindow *ui;

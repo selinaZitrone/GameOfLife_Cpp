@@ -18,15 +18,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Game.cpp \
     MyGraphicScene.cpp \
+    gamewindow.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    twoplayers.cpp
 
 HEADERS += \
     Game.h \
     MyGraphicScene.h \
-    mainwindow.h
+    gamewindow.h \
+    mainwindow.h \
+    twoplayers.h
 
 FORMS += \
+    gamewindow.ui \
     mainwindow.ui
 
 # Default rules for deployment.
