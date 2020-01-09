@@ -12,15 +12,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     //MainWindow w;
-    mainWin = new MainWindow();
     game = new Game();
+
+    mainWin = new MainWindow();
     mainWin->show();
-
-    vector<int> arrayOne = {0, 1, 2, 3};
-    vector<int>&secondArrayOne = arrayOne;
-    vector<int> &ThirdArrayTwo = arrayOne;
-    qDebug() << &arrayOne << " " << &secondArrayOne << " " << &ThirdArrayTwo;
-
 
     return a.exec();
 }

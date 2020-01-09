@@ -7,9 +7,19 @@ using namespace std;
 class Game{
 
 public:
-    // they are used for the turns;
-    vector<int> arrayOne;
-    vector<int> arrayTwo;
+    Game();
+    vector<vector<bool>> gameSteps;
+    void initializeEmptyGame(int cellsPerSide);
+    void oneStepFurther();
+    void oneStepBack();
+    vector<bool> calculateLogicOfLife(vector<bool>&);
+
+    int actualStep;
+    int actualCellsPerLine;
+    int stepsBuffer;
+    int bufferIndex;
+
+
 };
 
 #endif // GAME_H

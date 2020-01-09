@@ -3,6 +3,8 @@
 
 #include <QGraphicsScene>
 #include <QMainWindow>
+using namespace std;
+#include <vector>
 
 class MyGraphicScene : public QGraphicsScene
 {
@@ -12,7 +14,7 @@ public:
     MyGraphicScene(QMainWindow * parent = 0);
     MyGraphicScene(QGraphicsItem * parent = 0);
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void paintLife(int array[], int len);
+    void paintLife(vector<bool>, int len);
 
 
 };
