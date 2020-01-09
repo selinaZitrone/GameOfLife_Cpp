@@ -12,6 +12,7 @@ public:
     MyGraphicScene(QMainWindow * parent = 0);
     MyGraphicScene(QGraphicsItem * parent = 0);
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void paintLife(int array[], int len);
 
 
 };

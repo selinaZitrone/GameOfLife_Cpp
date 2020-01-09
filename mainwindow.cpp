@@ -4,6 +4,18 @@
 #include <QtDebug>
 #include <QGraphicsSceneMouseEvent>
 #include "MyGraphicScene.h"
+#include "Game.h"
+
+/*
+Main Window takes care of GUI and connecting Game with Graphics
+it also manages the loop logic necessary for the Game to be played
+
+MyGraphicScene is derived from QGraphicsScene
+    painLife gets the array to be painted on the scene
+    mousePressEvent triggers toggleCells, which changes the array on the scene
+*/
+
+extern Game * game;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,13 +24,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     scene = new MyGraphicScene(this);
+    ui->graphicsView->setScene(scene);
 
-    qDebug() << "s";
+    // start a loop for n times (set timer to 0), refreshloop takes milliseconds for pace
     timer = 0;
-    times = 1;
+    times = 0;
     refreshLoop(500);
-
-
 }
 
 MainWindow::~MainWindow()
@@ -26,7 +37,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// TO DO
+// TO DO: this should came from "Game"
 int heart[] = {
     0,0,1,0,0,0,0,1,0,0,
     0,1,1,1,0,0,1,1,1,0,
@@ -46,48 +57,13 @@ void MainWindow::toggleCells(int x, int y)
     qDebug() << index;
 
     heart[index] == 0 ? heart[index] = 1 : heart[index] = 0;
-    paintLife(heart, 10);
+    scene->paintLife(heart, 10);
 }
-
-void MainWindow::paintLife(int array[], int len)
-{
-    // dimension in pixel of the View
-    int viewDim = 400;
-    //calculate the biggest area
-
-    int cellDim = viewDim/len;
-    // int bigDim = len * cellDim;
-    //scene->setSceneRect(scene.)
-
-    QImage image(viewDim, viewDim, QImage::Format_RGB32);
-    QRgb value;
-
-    value = qRgb(240, 100, 2); // 0xffbd9527
-
-    for(int i = 0; i < len; i++){
-        for(int e = 0; e < len; e++){
-             if(array[(i*len) + e]){
-                for(int x = 0; x < cellDim; x++){
-                    for(int y = 0; y < cellDim; y++){
-                        image.setPixel(e*cellDim + x, i*cellDim + y, value);
-                    }
-                }
-             }
-        }
-    }
-
-    // Print it
-    scene->setSceneRect(0,0,viewDim,viewDim);
-    scene->addPixmap(QPixmap::fromImage(image));
-    ui->graphicsView->setScene(scene);
-
-}
-
 
 void MainWindow::refreshLoop(int ms)
 {
     // things to do
-    paintLife(heart, 10);
+    scene->paintLife(heart, 10);
 
     //
     timer++;
@@ -97,4 +73,6 @@ void MainWindow::refreshLoop(int ms)
         QTimer::singleShot(ms,this,SLOT(refreshLoop(ms)));
     }
 }
+
+
 

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "ui_mainwindow.h"
+#include "MyGraphicScene.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,7 +20,6 @@ public:
 
 
 private slots:
-    void paintLife(int[], int);
     void refreshLoop(int);
 
 //protected:
@@ -27,7 +27,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QGraphicsScene *scene;
+    MyGraphicScene *scene;
     QPixmap image;
     int timer;
     int times;
