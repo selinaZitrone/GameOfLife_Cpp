@@ -45,6 +45,13 @@ private slots:
 
     void on_loopMs_sliderMoved(int position);
 
+    void on_pushButton_clicked();
+
+    void on_randomSetupButton_clicked();
+
+
+    void on_aliveCellsSlider_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
     MyGraphicScene *scene;

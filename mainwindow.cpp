@@ -172,3 +172,23 @@ void MainWindow::on_loopMs_sliderMoved(int position)
 {
     ui->loopMsLabel->setText(QStringLiteral("%1 ms").arg(ui->loopMs->value()));
 }
+
+
+
+void MainWindow::on_randomSetupButton_clicked()
+{
+    int noAlive = ui->aliveCellsSlider->value();
+    qDebug() << noAlive << endl;
+}
+
+
+
+void MainWindow::on_aliveCellsSlider_sliderMoved(int position)
+{
+    int noAlive = ui->aliveCellsSlider->value();
+    qDebug() << noAlive;
+    qDebug() << "pos: " << position;
+    qDebug() << "------";
+    ui->aliveCellsLabel->setText(QStringLiteral("%1").arg(ui->aliveCellsSlider->value()));
+
+}
