@@ -8,10 +8,13 @@ extern MainWindow * mainWin;
 
 Game::Game()
 {
-    // it sets how many steps are saved (how many steps back you can go)
-    stepsBuffer = 100; // change it eventually
+    //! it sets how many steps are saved (how many steps back you can go)
+    stepsBuffer = 100;
 }
 
+/*!
+ * Initialize an empty field with a certain amount of cells per line
+ */
 void Game::initializeEmptyGame(int cellsPerLine)
 {
     gameSteps = {vector<bool>(cellsPerLine*cellsPerLine, false)};
@@ -20,27 +23,42 @@ void Game::initializeEmptyGame(int cellsPerLine)
     actualCellsPerLine = cellsPerLine;
 }
 
+/*!
+ * Moves the logic of the game one step further and then triggers the UI to update
+ */
 void Game::oneStepFurther()
 {
+    //first calculates the new steps and adds it to the vector
     gameSteps.push_back(calculateLogicOfLife(gameSteps[bufferIndex], actualCellsPerLine));
+
     if(bufferIndex < stepsBuffer){
+        // if there is space in the buffer, then it just increases the index
         bufferIndex++;
     } else {
+        // otherwise it erases the oldest entry
         gameSteps.erase(gameSteps.begin());
     }
+    // it is nevertheless a further step in the development
     actualStep++;
-    mainWin->updateGUI();
+    // update the UI
+    mainWin->updateUI();
 }
 
+/*!
+ * Moves the logic of the game one step back in time and then triggers the UI to update
+ */
 void Game::oneStepBack()
 {
     if(bufferIndex < 1) return;
     bufferIndex--;
     actualStep--;
     gameSteps.pop_back();
-    mainWin->updateGUI();
+    mainWin->updateUI();
 }
 
+/*!
+ * Applies the algorithm of Game of Life and returns a vector with the next configuration
+ */
 vector<bool> Game::calculateLogicOfLife(vector<bool> & status, int cellsPerLine)
 {
     vector<bool> toReturn(cellsPerLine*cellsPerLine, false);

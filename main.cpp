@@ -5,25 +5,28 @@
 #include "gamewindow.h"
 #include "twoplayers.h"
 
-MainWindow * mainWin;
+// declare the pointers to the class instances which have to be accessible
 
-GameWindow * gameWin;
+MainWindow * mainWin; //!< instance of the Main Window
 
-Game * game;
+GameWindow * gameWin; //!< instance of the Two Players Game Window
 
-TwoPlayers * twoPlay;
+Game * game; //!< instance of Logic of Game of Life class
+
+TwoPlayers * twoPlay; //!< instance of the Logic of Two Players game class
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    // make instances of the classes whose pointer has been declared before
     game = new Game();
     mainWin = new MainWindow();
     twoPlay = new TwoPlayers();
-
-    mainWin->show();
-
     gameWin = new GameWindow();
+
+    // show main window
+    mainWin->show();
 
     return a.exec();
 }
