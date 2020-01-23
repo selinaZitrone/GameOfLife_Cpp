@@ -17,6 +17,7 @@ TwoPlayers * twoPlay; //!< instance of the Logic of Two Players game class
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1"); //with the autoscreen scaling factor it also works on high dpi displays
     QApplication a(argc, argv);
 
     // make instances of the classes whose pointer has been declared before
