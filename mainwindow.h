@@ -58,7 +58,7 @@ private:
     Ui::MainWindow *ui;
     MyGraphicScene *scene; //!< custom scene, where the Game of Life is shown
     QPixmap image; //!< image to assign to the scene
-    int timer; //!< tracks how many ticks the loop did already
+    int timer; //!< tracks how many ticks the loop did already run
     int times; //!< how many times the loop has to run
     int viewResolution; //!< how many pixel is one side of the view resolution (the view is a square)
     bool loopActive = false;
