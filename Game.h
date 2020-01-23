@@ -9,7 +9,7 @@ class Game{
 public:
     Game();
     vector<vector<bool>> gameSteps;
-    void initializeEmptyGame(int cellsPerSide);
+    void initializeGame(int cellsPerSide, int percentAliveCells = 0);
     void oneStepFurther();
     void oneStepBack();
     vector<bool> calculateLogicOfLife(vector<bool>&);

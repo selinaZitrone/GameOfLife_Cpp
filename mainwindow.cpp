@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->loopMsLabel->setText(QStringLiteral("%1 ms").arg(ui->loopMs->value()));
 
     // it creates a basic empty "new"
-    game->initializeEmptyGame(get_CellsPerLine());
+    game->initializeGame(get_CellsPerLine());
     scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
 
 }
@@ -112,7 +112,7 @@ void MainWindow::refreshLoop()
 void MainWindow::on_newButton_clicked()
 {
     qDebug() << "newButton clicked";
-    game->initializeEmptyGame(get_CellsPerLine());
+    game->initializeGame(get_CellsPerLine());
     if(game->actualCellsPerLine >= 2){
         scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
     } else {
@@ -178,7 +178,8 @@ void MainWindow::on_loopMs_sliderMoved(int position)
 void MainWindow::on_randomSetupButton_clicked()
 {
     int noAlive = ui->aliveCellsSlider->value();
-    qDebug() << noAlive << endl;
+    game->initializeGame(get_CellsPerLine(), noAlive);
+    scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
 }
 
 
@@ -186,9 +187,6 @@ void MainWindow::on_randomSetupButton_clicked()
 void MainWindow::on_aliveCellsSlider_sliderMoved(int position)
 {
     int noAlive = ui->aliveCellsSlider->value();
-    qDebug() << noAlive;
-    qDebug() << "pos: " << position;
-    qDebug() << "------";
     ui->aliveCellsLabel->setText(QStringLiteral("%1").arg(ui->aliveCellsSlider->value()));
 
 }

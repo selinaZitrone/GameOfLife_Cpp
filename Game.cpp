@@ -1,6 +1,9 @@
 #include "Game.h"
 using namespace std;
 #include <vector>
+#include <algorithm>
+#include <random>
+#include <chrono>
 #include "mainwindow.h"
 #include <QDebug>
 
@@ -12,9 +15,18 @@ Game::Game()
     stepsBuffer = 100; // change it eventually
 }
 
-void Game::initializeEmptyGame(int cellsPerLine)
+void Game::initializeGame(int cellsPerLine, int percentAliveCells)
 {
+    // create a vector with an empty game (all false)
     gameSteps = {vector<bool>(cellsPerLine*cellsPerLine, false)};
+    // add the aliveCells
+    int numAliveCells = cellsPerLine*cellsPerLine/100 * percentAliveCells;
+    fill_n(gameSteps[0].begin(), numAliveCells, true);
+    // randomly shuffle the vector
+    // get a time-based seed
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    shuffle(gameSteps[0].begin(), gameSteps[0].end(), std::default_random_engine(seed));
+
     actualStep = 0;
     bufferIndex = 0;
     actualCellsPerLine = cellsPerLine;

@@ -49,7 +49,6 @@ private slots:
 
     void on_randomSetupButton_clicked();
 
-
     void on_aliveCellsSlider_sliderMoved(int position);
 
 private:
