@@ -71,9 +71,9 @@
    <widget class="QLabel" name="Moves_1">
     <property name="geometry">
      <rect>
-      <x>230</x>
+      <x>30</x>
       <y>450</y>
-      <width>121</width>
+      <width>321</width>
       <height>61</height>
      </rect>
     </property>
@@ -95,7 +95,7 @@
      <rect>
       <x>420</x>
       <y>450</y>
-      <width>121</width>
+      <width>321</width>
       <height>61</height>
      </rect>
     </property>

@@ -1,12 +1,17 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QTimer>
-#include <QtDebug>
+#include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include "MyGraphicScene.h"
 #include "Game.h"
 #include "gamewindow.h"
 #include "twoplayers.h"
+#include <QFile>
+#include <QDataStream>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QtMath>
 
 using namespace std;
 #include <vector>
@@ -41,6 +46,39 @@ MainWindow::~MainWindow()
 }
 
 
+// ---- START CONDITION ---
+
+// clicked on the UI - New Button
+void MainWindow::on_newButton_clicked()
+{
+    // reinitialize the game, passing how many cells per line has been chosen by the user
+    game->initializeEmptyGame(get_CellsPerLine());
+
+    // adapt view
+    int res = viewResolution/get_CellsPerLine();
+    set_ViewResolution(res*get_CellsPerLine());
+
+    // if slider "cells alive" != 0% then make some cells alive
+    if(ui->sliderCellsAlive->value() != 0){
+        game->turnSomeRandomCellsAlive(ui->sliderCellsAlive->value());
+    }
+
+    // if not too small...
+    if(game->actualCellsPerLine >= 2){
+        // paint the scene
+        scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
+    } else {
+        qDebug() << "cells < 2";
+    }
+
+    updateUI();
+}
+
+void MainWindow::on_sliderCellsAlive_sliderMoved(int position)
+{
+    ui->labelCellsAlive->setText(QStringLiteral("alive: %1%").arg(position));
+}
+
 /*!
  * gets the coordinates of a click on the referenced scene and changes the corresponding cells
  */
@@ -64,23 +102,8 @@ void MainWindow::toggleCells(int x, int y, MyGraphicScene * theScene)
 }
 
 
-/*!
- * Returns the cells per line defined in the GUI by the user
- */
-int MainWindow::get_CellsPerLine()
-{
-    return ui->cellsPerLine->value();
-}
 
-
-/*!
- * returns number of pixel of one side of the view (view is square)
- */
-int MainWindow::get_ViewResolution()
-{
-    return viewResolution;
-}
-
+// ---- LOOP ----
 
 /*!
  * Starts a loop of Game of Life - setting times to the value choosen in the UI
@@ -94,11 +117,57 @@ void MainWindow::startLoop()
         refreshLoop();
 }
 
-void MainWindow::updateUI()
+/*!
+ * It changes the color of the start button, based on loopPause and loopActive (grey / yellow / green)
+ */
+void MainWindow::setStartLoopButtonColor()
 {
-    ui->actualStepLabel->setText(QStringLiteral("Actual step: %1").arg(game->actualStep));
+    QString qss;
+    if(loopPause && loopActive){
+        qss = QString("background-color: %1").arg("yellow");
+
+    } else if(!loopPause && loopActive){
+        qss = QString("background-color: %1").arg("lightgreen");
+    } else {
+        qss = QString("background-color: %1").arg("none");
+    }
+    ui->playButton->setStyleSheet(qss);
 }
 
+
+
+// clicked on the UI - Play Button
+void MainWindow::on_playButton_clicked()
+{
+    if(loopPause){
+        // if it was just in pause... continue it
+        loopPause = false;
+    } else {
+        if(!loopActive){
+        // if it was off.. stat it
+            startLoop();
+        }
+    }
+
+    setStartLoopButtonColor();
+}
+
+// clicked on the UI - Pause Button
+void MainWindow::on_pauseButton_clicked()
+{
+    loopPause = !loopPause;
+    setStartLoopButtonColor();
+
+}
+
+
+
+// reset the loop
+void MainWindow::on_resetButton_clicked()
+{
+    loopActive = false;
+    times = 0;
+}
 
 /*!
  * It's a looping function, calling itself with a pace defined in milliseconds
@@ -135,62 +204,87 @@ void MainWindow::refreshLoop()
         // if timer is not smaller then times, then stop and set loop to !active
         loopActive = false;
     }
+    setStartLoopButtonColor();
 }
 
 
-
-// clicked on the UI - New Button
-void MainWindow::on_newButton_clicked()
+void MainWindow::updateUI()
 {
-    // reinitialize the game, passing how many cells per line has been chosen by the user
-    game->initializeEmptyGame(get_CellsPerLine());
-    // if not too small...
-    if(game->actualCellsPerLine >= 2){
-        // paint the scene
-        scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
-    } else {
-        qDebug() << "cells < 2";
-    }
-
+    ui->actualStepLabel->setText(QStringLiteral("Actual step: %1").arg(game->actualStep));
 }
 
-// TO IMPLEMENT
+
+// ----------------------
+
+
+// when click on the save Button
 void MainWindow::on_saveButton_clicked()
 {
-
+    QString fileName = QFileDialog::getSaveFileName(this,
+            tr("Save Cells Pattern"), "",
+            tr("Pattern (*.gol);;All Files (*)"));
+    if (fileName.isEmpty())
+            return;
+        else {
+            QFile file(fileName);
+            if (!file.open(QIODevice::WriteOnly)) {
+                QMessageBox::information(this, tr("Unable to open file"),
+                    file.errorString());
+                return;
+            }
+            QDataStream out(&file);
+               out.setVersion(QDataStream::Qt_4_5);
+               QVector<bool> toSerialize = QVector<bool>::fromStdVector(game->gameSteps[game->bufferIndex]);
+               out << toSerialize;
+         }
 }
 
-// TO IMPLEMENT
+// when click on the Load button
 void MainWindow::on_loadButton_clicked()
 {
+    QString fileName = QFileDialog::getOpenFileName(this,
+           tr("Load Cells Pattern"), "",
+           tr("Pattern (*.gol);;All Files (*)"));
+    if (fileName.isEmpty())
+            return;
+        else {
 
+            QFile file(fileName);
+
+            if (!file.open(QIODevice::ReadOnly)) {
+                QMessageBox::information(this, tr("Unable to open file"),
+                    file.errorString());
+                return;
+            }
+
+            QDataStream in(&file);
+            in.setVersion(QDataStream::Qt_4_5);
+
+            QVector<bool> toDeserialize;
+            in >> toDeserialize;
+            if (toDeserialize.isEmpty()) {
+                        QMessageBox::information(this, tr("Empty pattern"),
+                            tr("The file you are attempting to open is empty."));
+                    } else {
+                        // calculate the square size based on the size of the QVector
+                        int sqSize = qSqrt( toDeserialize.size() );
+                        // initialize the empty game of the correct dimension
+                        game->initializeEmptyGame( sqSize );
+                        // set the deserialized vector as first step
+                        game->firstStep = toDeserialize.toStdVector();
+                        game->gameSteps[0] = game->firstStep;
+                        // paint field
+                        scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
+                        // adapt view
+                        int res = viewResolution/sqSize;
+                        set_ViewResolution(res*sqSize);
+                    }
+                }
 }
 
-// clicked on the UI - Play Button
-void MainWindow::on_playButton_clicked()
-{
-    if(loopPause){
-        // if it was just in pause... continue it
-        loopPause = false;
-    } else {
-        if(!loopActive){
-        // if it was off.. stat it
-            startLoop();
-        }
-    }
-}
 
-// clicked on the UI - Pause Button
-void MainWindow::on_pauseButton_clicked()
-{
-    loopPause = !loopPause;
-}
 
-// CHANGE IT TO "RANDOM"???
-void MainWindow::on_resetButton_clicked()
-{
 
-}
 
 // clicked on the UI - Forward Button
 void MainWindow::on_forwardStepButton_clicked()
@@ -210,7 +304,7 @@ void MainWindow::on_backStepButton_clicked()
 void MainWindow::on_loopMs_sliderMoved(int position)
 {
     // just update the UI (the value is read automatically by the looping function)
-    ui->loopMsLabel->setText(QStringLiteral("%1 ms").arg(ui->loopMs->value()));
+    ui->loopMsLabel->setText(QStringLiteral("%1 ms").arg(position));
 }
 
 // on UI: starts the two players game
@@ -227,4 +321,37 @@ void MainWindow::on_twoPlayersOpenButton_clicked()
 
     // update the GUI
     gameWin->updateGUI();
+}
+
+
+/*!
+ * Returns the cells per line defined in the GUI by the user
+ */
+int MainWindow::get_CellsPerLine()
+{
+    return ui->cellsPerLine->value();
+}
+
+
+/*!
+ * returns number of pixel of one side of the view (view is square)
+ */
+int MainWindow::get_ViewResolution()
+{
+    return viewResolution;
+}
+
+/*!
+ * changes the dimesion of the view, to accomodate the scene (otherwise: black border)
+ */
+void MainWindow::set_ViewResolution(int res)
+{
+    ui->graphicsView->resize(res, res);
+}
+
+// goes back to the first step
+void MainWindow::on_backToStartStep_clicked()
+{
+    game->backToStartStep();
+    scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
 }

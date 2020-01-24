@@ -3,6 +3,7 @@ using namespace std;
 #include <vector>
 #include "mainwindow.h"
 #include <QDebug>
+#include <random>
 
 extern MainWindow * mainWin;
 
@@ -17,10 +18,26 @@ Game::Game()
  */
 void Game::initializeEmptyGame(int cellsPerLine)
 {
-    gameSteps = {vector<bool>(cellsPerLine*cellsPerLine, false)};
+    firstStep = vector<bool>(cellsPerLine*cellsPerLine, false);
+    gameSteps = {firstStep};
     actualStep = 0;
     bufferIndex = 0;
     actualCellsPerLine = cellsPerLine;
+}
+
+
+/*!
+ * Turns a certain amount of cells alive (max int is 100)
+ */
+void Game::turnSomeRandomCellsAlive(int percentAliveCells){
+    int numAliveCells = actualCellsPerLine*actualCellsPerLine/100 * percentAliveCells;
+    fill_n(firstStep.begin(), numAliveCells, true);
+
+    // get a time-based seed
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+     // randomly shuffle the vector
+    shuffle(firstStep.begin(), firstStep.end(), std::default_random_engine(seed));
+    gameSteps = {firstStep};
 }
 
 /*!
@@ -53,6 +70,14 @@ void Game::oneStepBack()
     bufferIndex--;
     actualStep--;
     gameSteps.pop_back();
+    mainWin->updateUI();
+}
+
+void Game::backToStartStep()
+{
+    gameSteps = {firstStep};
+    bufferIndex = 0;
+    actualStep = 0;
     mainWin->updateUI();
 }
 

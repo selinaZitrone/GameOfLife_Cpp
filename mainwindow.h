@@ -23,6 +23,7 @@ public:
     void toggleCells(int x, int y, MyGraphicScene * theScene);
     int get_CellsPerLine();
     int get_ViewResolution();
+    void set_ViewResolution(int res);
 
     void updateUI();
 
@@ -50,9 +51,14 @@ private slots:
 
     void on_twoPlayersOpenButton_clicked();
 
+    void on_sliderCellsAlive_sliderMoved(int position);
+
+    void on_backToStartStep_clicked();
+
 private:
     // member functions
     void startLoop();
+    void setStartLoopButtonColor();
 
     // variables
     Ui::MainWindow *ui;
