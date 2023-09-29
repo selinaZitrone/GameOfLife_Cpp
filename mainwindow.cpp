@@ -234,7 +234,11 @@ void MainWindow::on_saveButton_clicked()
             }
             QDataStream out(&file);
                out.setVersion(QDataStream::Qt_4_5);
-               QVector<bool> toSerialize = QVector<bool>::fromStdVector(game->gameSteps[game->bufferIndex]);
+               // Date: 2023-09-29
+               // Auther: Ar Gas
+               // Change fromStdVector to the container method used since Qt6.3
+               //QVector<bool> toSerialize = QVector<bool>::fromStdVector(game->gameSteps[game->bufferIndex]);
+               QVector<bool> toSerialize = QVector<bool>(game->gameSteps[game->bufferIndex].begin(), game->gameSteps[game->bufferIndex].end());
                out << toSerialize;
          }
 }
@@ -271,7 +275,12 @@ void MainWindow::on_loadButton_clicked()
                         // initialize the empty game of the correct dimension
                         game->initializeEmptyGame( sqSize );
                         // set the deserialized vector as first step
-                        game->firstStep = toDeserialize.toStdVector();
+                        // Date: 2023-09-29
+                        // Auther: Ar Gas
+                        // Change toStdVector to the container method used after Qt6.3
+                        // game->firstStep = toDeserialize.toStdVector();
+                        std::vector <bool> stdvector(toDeserialize.begin(), toDeserialize.end());
+                        game->firstStep = stdvector;
                         game->gameSteps[0] = game->firstStep;
                         // paint field
                         scene->paintLife(game->gameSteps[game->bufferIndex], game->actualCellsPerLine);
